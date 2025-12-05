@@ -169,7 +169,7 @@ section {
 .hero-section {
     position: relative;
     background: linear-gradient(rgba(0, 61, 96, 0.85), rgba(0, 0, 0, 0.9)),
-        url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+        url('/image/fondo.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -233,6 +233,23 @@ section {
     text-align: center;
     padding: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.5s ease;
+    animation: countUp 0.8s ease both;
+}
+
+.stat-item:nth-child(1) { 
+    animation-delay: 0.3s; 
+}
+.stat-item:nth-child(2) { 
+    animation-delay: 0.6s; 
+}
+.stat-item:nth-child(3) { 
+    animation-delay: 0.9s; 
+}
+
+.stat-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-5px);
 }
 
 .stat-item:last-child {
@@ -248,6 +265,7 @@ section {
     align-items: center;
     justify-content: center;
     gap: 2px;
+    transition: all 1s ease;
 }
 
 .stat-plus {
@@ -313,19 +331,6 @@ section {
 
 .about-image-container:hover img {
     transform: scale(1.02);
-}
-
-.experience-badge {
-    position: absolute;
-    bottom: -15px;
-    right: 20px;
-    background: var(--secondary-color);
-    color: var(--dark-color);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .badge-years {
@@ -598,6 +603,17 @@ section {
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -881,3 +897,4 @@ footer {
         font-size: 11px;
     }
 }
+

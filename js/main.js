@@ -1,5 +1,47 @@
 // Inicialización cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', function () {
+    // ===== PREVENIR SCROLL AL RECARGAR =====
+    // Guardar posición antes de recargar
+    window.addEventListener('beforeunload', function () {
+        window.scrollTo(0, 0);
+    });
+
+    // Forzar scroll al inicio al cargar
+    window.scrollTo(0, 0);
+
+    // Asegurar que el hash no cause scroll automático
+    if (window.location.hash) {
+        window.location.hash = '';
+    }
+
+    // ===== LOGO CLICK - Scroll al inicio =====
+    const navbarBrand = document.querySelector('.navbar-brand');
+    if (navbarBrand) {
+        navbarBrand.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            // Actualizar URL sin hash
+            history.replaceState(null, null, ' ');
+
+            // Cerrar navbar en móvil
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                bsCollapse.hide();
+            }
+
+            // Actualizar clase activa en menú
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector('.nav-link[href="#inicio"]').classList.add('active');
+        });
+    }
 
     // ===== NAVBAR SCROLL EFFECT =====
     const navbar = document.querySelector('.navbar');
@@ -249,7 +291,7 @@ ${mensaje}
 
 ---
 *Enviado desde el sitio web de BCA General Services*
-*https://bcageneralservices.com*`;
+*https://bca.pe*`;
 
             // Codificar el mensaje para URL
             const encodedMessage = encodeURIComponent(whatsappMessage);
@@ -306,6 +348,67 @@ ${mensaje}
         }
     }
 
+    // ===== ANIMACIÓN DE ESTADÍSTICAS MÁS LENTA =====
+    function animateStats() {
+        const statNumbers = document.querySelectorAll('.stat-number');
+
+        statNumbers.forEach(stat => {
+            // Guardar el contenido HTML original
+            const originalContent = stat.innerHTML;
+
+            // Extraer el número del texto
+            const textContent = stat.textContent || stat.innerText;
+            const numberMatch = textContent.match(/\d+/);
+
+            if (numberMatch) {
+                const target = parseInt(numberMatch[0]);
+                let current = 0;
+                const increment = target / 50; // Reducido de 50 a 80 para hacer más lento
+                const duration = 2000; // 2 segundos total
+                const steps = duration / 30; // ~67 pasos
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        // Restaurar el contenido original con símbolos
+                        stat.innerHTML = originalContent;
+                        clearInterval(timer);
+                    } else {
+                        // Mostrar solo el número durante la animación
+                        stat.textContent = Math.floor(current);
+                    }
+                }, 30);
+            }
+        });
+    }
+
+    // ===== SE CONTACTO - Información adicional =====
+    function addContactInfo() {
+        const contactInfo = document.querySelector('.contact-info-card .contact-item:last-child');
+        
+        if (contactInfo) {
+            // Crear nuevo elemento después del horario
+            const newInfo = document.createElement('div');
+            newInfo.className = 'contact-item d-flex mb-4';
+            newInfo.innerHTML = `
+                <div class="contact-icon me-3">
+                    <i class="bi bi-chat-left-text-fill"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Respuesta Rápida</h5>
+                    <p class="mb-0">Respondemos consultas en menos de 24 horas</p>
+                    <p class="mb-0"><small class="text-muted">* Para cotizaciones detalladas contactar por WhatsApp</small></p>
+                </div>
+            `;
+            
+            // Insertar después del horario
+            contactInfo.parentNode.insertBefore(newInfo, contactInfo.nextSibling);
+        }
+    }
+
+    // Ejecutar cuando el DOM esté listo
+    addContactInfo();
+
     // ===== ANIMACIONES AL SCROLL =====
     function animateOnScroll() {
         const elements = document.querySelectorAll('.service-card, .value-card, .project-card');
@@ -324,38 +427,7 @@ ${mensaje}
     window.addEventListener('scroll', animateOnScroll);
     animateOnScroll();
 
-    // ===== ANIMACIÓN DE ESTADÍSTICAS =====
-    function animateStats() {
-        const statNumbers = document.querySelectorAll('.stat-number');
-
-        statNumbers.forEach(stat => {
-            // Guardar el contenido HTML original
-            const originalContent = stat.innerHTML;
-
-            // Extraer el número del texto
-            const textContent = stat.textContent || stat.innerText;
-            const numberMatch = textContent.match(/\d+/);
-
-            if (numberMatch) {
-                const target = parseInt(numberMatch[0]);
-                let current = 0;
-                const increment = target / 50;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        // Restaurar el contenido original con símbolos
-                        stat.innerHTML = originalContent;
-                        clearInterval(timer);
-                    } else {
-                        // Mostrar solo el número durante la animación
-                        stat.textContent = Math.floor(current);
-                    }
-                }, 30);
-            }
-        });
-    }
-
-    // Ejecutar animación cuando la sección hero sea visible
+    // Ejecutar animación de estadísticas cuando la sección hero sea visible
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -363,7 +435,7 @@ ${mensaje}
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.6 });
 
     const heroSection = document.querySelector('.hero-section');
     if (heroSection) {
